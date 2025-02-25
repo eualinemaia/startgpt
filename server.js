@@ -1,33 +1,44 @@
 const express = require('express');
-const cors = require('cors');
 const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
-app.use(express.json());
-app.use(cors());
+const port = process.env.PORT || 3000;
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Captura a API Key da Vercel
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 app.post('/chat', async (req, res) => {
     try {
-        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-            model: 'gpt-4',
-            messages: req.body.messages,
-            max_tokens: 1000,
-            temperature: 0.7,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-4',
+                messages: req.body.messages,
+                max_tokens: 1000,
+                temperature: 0.7
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                }
             }
-        });
+        );
 
         res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Erro ao chamar a API da OpenAI:', error.response ? error.response.data : error.message);
+        res.status(500).json({ error: 'Erro ao processar a solicitação' });
     }
 });
 
-app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000');
+// Inicializa o servidor
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
 });
