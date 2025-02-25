@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente Imobiliário GPT</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        textarea { width: 100%; height: 100px; }
+        button { padding: 10px 20px; background: #007BFF; color: #fff; border: none; border-radius: 5px; }
+        .response { margin-top: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Seu Agente Imobiliário GPT</h1>
+    <textarea id="userInput" placeholder="Digite sua pergunta..."></textarea>
+    <button onclick="sendMessage()">Enviar</button>
+
+    <div class="response" id="response"></div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput').value;
+            const responseDiv = document.getElementById('response');
+
+            responseDiv.innerHTML = "Carregando...";
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: "user", content: userInput }] })
+            });
+
+            const data = await response.json();
+            responseDiv.innerHTML = data.choices[0
